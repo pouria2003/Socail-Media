@@ -1,8 +1,8 @@
 package DataBase;
 
+import Exceptions.DataBaseExceptions.UsernameExistException;
 import User.User;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -11,19 +11,22 @@ public class Signup {
         if(user == null)
             throw new NullPointerException();
 
-
         Statement statement = DBConnection.getInstance().getConnection().createStatement();
         // check if userName exists
-        ResultSet rs = statement.executeQuery("SELECT TOP 1 FROM USERS WHERE UserName = '" +
-                user.getUsername() + "';");
-        if(rs.next())
-            throw new SQLException("the user name is token");
-        rs.close();
+
+        if(isUsernameExist(user.getUsername()))
+            throw new UsernameExistException("username already exists");
 
         statement.executeUpdate("INSERT INTO USERS (UserName, Password, FirstName, LastName," +
                 "NumberOfFollowers, NumberOfFollowing) VALUES ('" +
                 user.getUsername() + "', '" + user.getPassword() + "', '" +
                 user.getFirstname() + "', '" + user.getLastname() + "', 0, 0);");
         statement.close();
+    }
+
+    public static boolean isUsernameExist(String username) throws SQLException {
+        Statement statement = DBConnection.getInstance().getConnection().createStatement();
+        return statement.executeQuery("SELECT Username FROM Users WHERE Username = '" +
+                username + "';").next();
     }
 }

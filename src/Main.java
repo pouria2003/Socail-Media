@@ -1,7 +1,7 @@
 import GUI.*;
 import User.User;
+import User.UserRelated.*;
 
 public class Main {
-    Signup signup = new Signup();
-
+    User user = null;
 }

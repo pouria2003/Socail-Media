@@ -19,9 +19,7 @@ public class Person {
         if(firstname == null) {
             return;
         }
-        if(firstname.length() < 2 || firstname.length() > 20)
-            throw new IllegalStateException("firstname must have at least " +
-                    "2 character and at most 20 character");
+        NameValidation(firstname);
         this.firstname = firstname;
     }
 
@@ -30,13 +28,21 @@ public class Person {
         // null allowed to be able to have only lastname or only firstname
         if(lastname == null)
             return;
-        if(lastname.length() < 2 || lastname.length() > 20)
-            throw new IllegalStateException("lastname must have at least " +
-                    "2 character and at most 20 character");
+        NameValidation(lastname);
         this.lastname = lastname;
     }
 
     public String getFirstname() { return firstname; }
     public String getLastname()  { return lastname; }
+
+    public static void NameValidation(String name)
+            throws IllegalStateException {
+
+        if(name == null)
+            return;
+        if(name.length() < 2 || name.length() > 20)
+            throw new IllegalStateException("lastname must have at least " +
+                    "2 character and at most 20 character");
+    }
 
 }

@@ -37,25 +37,16 @@ public class User extends Person{
     }
 
     protected void setUsername(@NotNull String username)
-            throws IllegalStateException, IllegalArgumentException {
+            throws IllegalStateException {
 
-        if(username.length() < 3 || username.length() > 20)
-            throw new IllegalStateException("username should should have at " +
-                    "least 3 character and at most 20 character");
+        UsernameValidation(username);
         this.username = username;
     }
 
     protected void setPassword(@NotNull String password)
-            throws IllegalStateException, IllegalArgumentException {
+            throws IllegalStateException {
 
-        if(password.length() < 6 || password.length() > 20)
-            throw new IllegalStateException("username should should have at " +
-                    "least 6 character and at most 20 character");
-        if(password.matches("[a-z]+") || password.matches("[A-Z]+"))
-            throw new IllegalStateException("password must not have only lowercase " +
-                    "or only uppercase character");
-        if(!password.matches("[a-zA-Z@#$*./+\\\\-]+"))
-            throw new IllegalStateException("not allowed character has been used");
+        PasswordValidation(password);
         this.password = password;
     }
 
@@ -93,6 +84,27 @@ public class User extends Person{
         } catch (SQLException e) {
             /// do something with GUI
         }
+    }
+
+    // if username is valid nothing happens otherwise throws exception
+    public static void UsernameValidation(String username)
+            throws IllegalStateException {
+        if(username.length() < 3 || username.length() > 20)
+            throw new IllegalStateException("username should should have at " +
+                    "least 3 character and at most 20 character");
+    }
+
+    // if password is valid nothing happens otherwise throws exception
+    public static void PasswordValidation(String password)
+            throws IllegalStateException {
+        if(password.length() < 6 || password.length() > 20)
+            throw new IllegalStateException("username should should have at " +
+                    "least 6 character and at most 20 character");
+        if(password.matches("[a-z]+") || password.matches("[A-Z]+"))
+            throw new IllegalStateException("password must not have only lowercase " +
+                    "or only uppercase characters");
+        if(!password.matches("[a-zA-Z0-9@#$*./+\\\\-]+"))
+            throw new IllegalStateException("not allowed character has been used");
     }
 
 }

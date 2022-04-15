@@ -21,7 +21,7 @@ public class DBConnection {
     }
 
     private DBConnection() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/testDB",
+        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/socialmedia",
                 "root", "S.Pouria.H13812003");
     }
 
