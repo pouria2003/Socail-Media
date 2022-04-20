@@ -1,10 +1,14 @@
 package GUI;
 
+import Main.Main;
+
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
 public class Signup extends JFrame{
+
+
 
     String username = null;
     String password = null;
@@ -30,7 +34,16 @@ public class Signup extends JFrame{
         JPanel signupPNL = new JPanel(new FlowLayout(FlowLayout.CENTER));
         signupPNL.add(signupBTN);
         signupBTN.addActionListener(e -> {
-
+            try {
+                Main.getInstance().signUp(User.UserRelated.registerUser(username, password, firstname, lastname));
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "an error occurred! please try later",
+                        "Something Wrong",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
         });
 
         JLabel usernameLBL = new JLabel("*username:");
@@ -60,16 +73,16 @@ public class Signup extends JFrame{
                     username = un;
                     isUsernameValid = true;
                 }
-                signupBTN.setEnabled(isUsernameValid && isPasswordValid &&
-                        isFirstnameValid && isLastnameValid);
-
             } catch (IllegalStateException ex) {
                 usernameValLBL.setText(ex.getMessage());
                 isUsernameValid = false;
             } catch (SQLException ex) {
                 ex.printStackTrace();
-                usernameValLBL.setText("a problem occurred in connecting to database please try later");
+                usernameValLBL.setText("some internal problem occurred please try later");
                 isUsernameValid = false;
+            } finally {
+                signupBTN.setEnabled(isUsernameValid && isPasswordValid &&
+                        isFirstnameValid && isLastnameValid);
             }
         });
 
@@ -95,11 +108,12 @@ public class Signup extends JFrame{
                 passwordValLBL.setText("password is valid");
                 password = pass;
                 isPasswordValid = true;
-                signupBTN.setEnabled(isUsernameValid && isPasswordValid &&
-                        isFirstnameValid && isLastnameValid);
             } catch (IllegalStateException ex) {
                 passwordValLBL.setText(ex.getMessage());
                 isPasswordValid = false;
+            } finally {
+                signupBTN.setEnabled(isUsernameValid && isPasswordValid &&
+                        isFirstnameValid && isLastnameValid);
             }
         });
 
@@ -127,11 +141,12 @@ public class Signup extends JFrame{
                 firstnameValLBL.setText("firstname is valid");
                 firstname = fn;
                 isFirstnameValid = true;
-                signupBTN.setEnabled(isUsernameValid && isPasswordValid &&
-                        isFirstnameValid && isLastnameValid);
             } catch (IllegalStateException ex) {
                 firstnameValLBL.setText(ex.getMessage());
                 isFirstnameValid = false;
+            } finally {
+                signupBTN.setEnabled(isUsernameValid && isPasswordValid &&
+                        isFirstnameValid && isLastnameValid);
             }
 
         });
@@ -160,11 +175,12 @@ public class Signup extends JFrame{
                 lastnameValLBL.setText("lastname is valid");
                 lastname = ln;
                 isLastnameValid = true;
-                signupBTN.setEnabled(isUsernameValid && isPasswordValid &&
-                        isFirstnameValid && isLastnameValid);
             } catch (IllegalStateException ex) {
                 lastnameValLBL.setText(ex.getMessage());
                 isLastnameValid = false;
+            } finally {
+                signupBTN.setEnabled(isUsernameValid && isPasswordValid &&
+                        isFirstnameValid && isLastnameValid);
             }
 
         });
@@ -182,8 +198,5 @@ public class Signup extends JFrame{
         this.setVisible(true);
     }
 
-    public static void main(String[] args) {
-        new Signup();
-    }
 
 }
