@@ -1,7 +1,7 @@
 package DataBase;
 
 import Exceptions.DataBaseExceptions.UsernameExistException;
-import User.User;
+import BusinessLogic.User.User;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,10 +17,10 @@ public class Signup {
         if(isUsernameExist(user.getUsername()))
             throw new UsernameExistException("username already exists");
 
-        statement.executeUpdate("INSERT INTO USERS (UserName, Password, FirstName, LastName," +
+        statement.executeUpdate("INSERT INTO USERS (UserName, Password, " +
                 "NumberOfFollowers, NumberOfFollowing) VALUES ('" +
-                user.getUsername() + "', '" + user.getPassword() + "', '" +
-                user.getFirstname() + "', '" + user.getLastname() + "', 0, 0);");
+                user.getUsername() + "', '" + user.getPassword() + "', " +
+                "0, 0);");
         statement.close();
     }
 

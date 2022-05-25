@@ -1,15 +1,15 @@
 package DataBase;
 
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-//import Exceptions.DataBaseExceptions.*;
 
+// singleton
 public class DBConnection {
 
     private static java.sql.Connection connection;
 
     public static DBConnection only_connection = null;
+
     public static DBConnection getInstance() throws SQLException {
         if(only_connection == null)
             only_connection = new DBConnection();

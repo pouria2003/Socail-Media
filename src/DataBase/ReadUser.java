@@ -2,7 +2,7 @@ package DataBase;
 
 import Exceptions.DataBaseExceptions.UsernameNotExistException;
 import Exceptions.DataBaseExceptions.WrongPasswordException;
-import User.User;
+import BusinessLogic.User.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,7 +25,6 @@ public class ReadUser {
             throw new WrongPasswordException("password is not correct");
         }
         User user = new User(resultSet.getString("UserName"), resultSet.getString("Password"),
-                resultSet.getString("FirstName"), resultSet.getString("LastName"),
                 resultSet.getInt("NumberOfFollowers"), resultSet.getInt("NumberOfFollowing"));
         resultSet.close();
         statement.close();

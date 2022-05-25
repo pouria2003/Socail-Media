@@ -1,53 +1,57 @@
-package User;
+package BusinessLogic.User;
 
 import DataBase.DeleteFollower;
 import DataBase.Follow;
-import Person.Person;
-import org.jetbrains.annotations.NotNull;
+
 
 import java.sql.SQLException;
 
-public class User extends Person{
-    protected String username;
-    protected String password;
-    protected int number_of_followers;
-    protected int number_of_followings;
+public class User {
+    private String username;
+    private String password;
+    private int number_of_followers;
+    private int number_of_followings;
 
     public User(String username, String password)
-            throws IllegalStateException, IllegalArgumentException{
-        setUsername(username);
-        setPassword(password);
-    }
-
-    public User(String username, String password, String firstname, String lastname)
-            throws IllegalStateException, IllegalArgumentException {
-        super(firstname, lastname);
-        setUsername(username);
-        setPassword(password);
-    }
-
-    public User(String username, String password, String firstname, String lastname,
-                int number_of_followers, int number_of_followings)
-            throws IllegalStateException, IllegalArgumentException {
-        super(firstname, lastname);
-        setUsername(username);
-        setPassword(password);
-        this.number_of_followers = number_of_followers;
-        this.number_of_followings = number_of_followings;
-    }
-
-    protected void setUsername(@NotNull String username)
             throws IllegalStateException {
+        setUsername(username);
+        setPassword(password);
+        setNumberOfFollowings(0);
+        setNumberOfFollowers(0);
+    }
 
+    public User(String username, String password, int number_of_followers, int number_of_followings)
+            throws IllegalStateException {
+        setUsername(username);
+        setPassword(password);
+        setNumberOfFollowers(number_of_followers);
+        setNumberOfFollowings(number_of_followings);
+    }
+
+    private void setUsername(String username)
+            throws IllegalStateException {
         UsernameValidation(username);
         this.username = username;
     }
 
-    protected void setPassword(@NotNull String password)
+    private void setPassword(String password)
             throws IllegalStateException {
-
         PasswordValidation(password);
         this.password = password;
+    }
+
+    private void setNumberOfFollowers(int number_of_followers)
+            throws IllegalStateException {
+        if(number_of_followers < 0)
+            throw new IllegalStateException("Number of followers can not be a negative integer");
+        this.number_of_followers = number_of_followers;
+    }
+
+    private void setNumberOfFollowings(int number_of_followings)
+            throws IllegalStateException{
+        if(number_of_followings < 0)
+            throw new IllegalStateException("Number of followings can not be a negative integer");
+        this.number_of_followings = number_of_followings;
     }
 
     public String getUsername() {
@@ -57,6 +61,10 @@ public class User extends Person{
     public String getPassword() {
         return password;
     }
+
+    public int getNumberOfFollowers() { return number_of_followers; }
+
+    public int getNumberOfFollowings() { return number_of_followings; }
 
     public static void registerUser(String username, String password) {
 
