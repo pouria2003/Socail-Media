@@ -2,6 +2,7 @@ package BusinessLogic.User;
 
 import DataBase.DeleteFollower;
 import DataBase.Follow;
+import Exceptions.UserException.*;
 
 
 import java.sql.SQLException;
@@ -98,21 +99,20 @@ public class User {
     public static void UsernameValidation(String username)
             throws IllegalStateException {
         if(username.length() < 3 || username.length() > 20)
-            throw new IllegalStateException("username should should have at " +
-                    "least 3 character and at most 20 character");
+            throw new UsernameLengthException();
+        if(!username.matches("[a-zA-Z]+[a-zA-Z0-9_]*"))
+            throw new UsernameFormatException();
     }
 
     // if password is valid nothing happens otherwise throws exception
     public static void PasswordValidation(String password)
             throws IllegalStateException {
         if(password.length() < 6 || password.length() > 20)
-            throw new IllegalStateException("username should should have at " +
-                    "least 6 character and at most 20 character");
+            throw new PasswordLengthException();
         if(password.matches("[a-z]+") || password.matches("[A-Z]+"))
-            throw new IllegalStateException("password must not have only lowercase " +
-                    "or only uppercase characters");
+            throw new WeakPasswordException();
         if(!password.matches("[a-zA-Z0-9@#$*./+\\\\-]+"))
-            throw new IllegalStateException("not allowed character has been used");
+            throw new PasswordFormatException();
     }
 
 }
