@@ -3,7 +3,10 @@ package BusinessLogic.Main;
 import BusinessLogic.Event.Event;
 import BusinessLogic.User.User;
 import Exceptions.UserException.*;
+import Exceptions.DataBaseExceptions.*;
 import UI.UI;
+
+import java.sql.SQLException;
 
 interface Response {
     Event perform();
@@ -55,6 +58,9 @@ public class Main {
 
                     try {
                         User user = new User(user_name, password);
+                        DataBase.Signup.SignUserUp(user);
+                        System.out.println("sign up successfully");
+                        System.exit(0);
                     } catch (PasswordLengthException ex) {
                         response = () -> UI.signUp(UI.SignUpSituations.PASSWORD_LENGTH_EXCEPTION);
                     } catch (WeakPasswordException ex) {
@@ -65,9 +71,14 @@ public class Main {
                         response = () -> UI.signUp(UI.SignUpSituations.USERNAME_LENGTH_EXCEPTION);
                     } catch (UsernameFormatException ex) {
                         response = () -> UI.signUp(UI.SignUpSituations.USERNAME_FORMAT_EXCEPTION);
+                    } catch (UsernameExistException ex) {
+                        response = () -> UI.signUp(UI.SignUpSituations.USERNAME_EXIST_EXCEPTION);
+                    } catch (SQLException ex) {
+                        UI.signUp(UI.SignUpSituations.DATA_BASE_EXCEPTION);
                     }
 
             }
+
         } while (true);
     }
 }

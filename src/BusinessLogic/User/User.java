@@ -3,6 +3,7 @@ package BusinessLogic.User;
 import DataBase.DeleteFollower;
 import DataBase.Follow;
 import Exceptions.UserException.*;
+import Exceptions.DataBaseExceptions.UsernameExistException;
 
 
 import java.sql.SQLException;
@@ -14,7 +15,7 @@ public class User {
     private int number_of_followings;
 
     public User(String username, String password)
-            throws IllegalStateException {
+            throws IllegalStateException, SQLException {
         setUsername(username);
         setPassword(password);
         setNumberOfFollowings(0);
@@ -22,7 +23,7 @@ public class User {
     }
 
     public User(String username, String password, int number_of_followers, int number_of_followings)
-            throws IllegalStateException {
+            throws IllegalStateException, SQLException {
         setUsername(username);
         setPassword(password);
         setNumberOfFollowers(number_of_followers);
@@ -30,8 +31,10 @@ public class User {
     }
 
     private void setUsername(String username)
-            throws IllegalStateException {
+            throws IllegalStateException, SQLException {
         UsernameValidation(username);
+        if(DataBase.Signup.isUsernameExist(username))
+            throw new UsernameExistException();
         this.username = username;
     }
 
@@ -111,7 +114,7 @@ public class User {
             throw new PasswordLengthException();
         if(password.matches("[a-z]+") || password.matches("[A-Z]+"))
             throw new WeakPasswordException();
-        if(!password.matches("[a-zA-Z0-9@#$*./+\\\\-]+"))
+        if(!password.matches("[a-zA-Z0-9@#*.]+"))
             throw new PasswordFormatException();
     }
 
