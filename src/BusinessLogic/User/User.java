@@ -64,38 +64,6 @@ public class User {
         return password;
     }
 
-    public int getNumberOfFollowers() { return number_of_followers; }
-
-    public int getNumberOfFollowings() { return number_of_followings; }
-
-    public static void registerUser(String username, String password) {
-
-        try {
-            User new_user = new User(username, password);
-        } catch (Exception e) {
-            // do something
-        }
-    }
-
-    public void Follow(String following_userName) {
-        //if(following_user == null)
-            // do something with GUI
-
-        try {
-            Follow.follow(this.username, following_userName);
-        } catch (SQLException e) {
-            // do something with GUI
-        }
-    }
-
-    public void deleteFollower(String follower_userName) {
-        try {
-            DeleteFollower.deleteFollower(this.username, follower_userName);
-        } catch (SQLException e) {
-            /// do something with GUI
-        }
-    }
-
     // if username is valid nothing happens otherwise throws exception
     public static void UsernameValidation(String username)
             throws IllegalStateException {

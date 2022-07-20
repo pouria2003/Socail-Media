@@ -4,6 +4,7 @@ import BusinessLogic.Event.Event;
 import BusinessLogic.User.User;
 import Exceptions.UserException.*;
 import Exceptions.DataBaseExceptions.*;
+import UI.Search;
 
 import java.sql.SQLException;
 
@@ -16,6 +17,7 @@ public class Main {
     private static Response response;
     private static User user;
     private static Event event;
+    private static String searched_username;
 
 
     public enum UserRequest {
@@ -23,6 +25,7 @@ public class Main {
         SIGN_UP,
         SIGN_IN,
         HOME_PAGE,
+        SEARCH,
         EXIT
     }
 
@@ -40,6 +43,7 @@ public class Main {
                 case SIGN_UP -> signUp();
                 case SIGN_IN -> signIn();
                 case HOME_PAGE -> homePage();
+                case SEARCH -> search();
             }
 
         } while (true);
@@ -135,8 +139,28 @@ public class Main {
     private static void homePage() {
         int user_option = Integer.parseInt(event.data[0]);
         switch (user_option) {
-            case 0, 2, 1 -> exitProgram(0);
+            case 0, 1 -> exitProgram(0);
+            case 2 -> response = () -> UI.Search.search(Search.SearchStatus.Normal, null);
             case 3 -> response = () -> UI.StartPage.startPage(UI.StartPage.StartPageSituation.EMPTY);
+        }
+    }
+
+    private static void search() {
+        String username = event.data[0];
+        if(username.equals("0")) {
+            response = () -> UI.HomePage.homePage();
+            return;
+        }
+        try {
+            if(DataBase.Signup.isUsernameExist(username)){
+                System.out.println("found");
+                response = () -> UI.HomePage.homePage();
+                searched_username = username;
+            }
+            else
+                response = () -> UI.Search.search(Search.SearchStatus.UsernameNotExist, username);
+        } catch (SQLException e) {
+            response = () -> UI.Search.search(Search.SearchStatus.DataBaseProblem, null);
         }
     }
 

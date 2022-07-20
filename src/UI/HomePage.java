@@ -20,6 +20,7 @@ public class HomePage {
                 System.out.println("3 - logout\n");
                 System.out.print("choose your option : ");
                 user_option = UI.scanner.nextInt();
+                UI.scanner.nextLine();
                 invalid_option = false;
             } catch (InputMismatchException ex) {
                 System.out.println("invalid option given");
