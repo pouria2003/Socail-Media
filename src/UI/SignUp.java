@@ -16,12 +16,15 @@ public class SignUp {
         USERNAME_LENGTH,
         USERNAME_FORMAT,
         USERNAME_EXISTS,
+        SECURITY_ANSWERS_LENGTH,
         DATA_BASE
     }
 
     public static Event signUp(SignUpSituation situation) {
         UI.clearScreen();
         System.out.println(UI.ANSI_BLUE + "\n--------------------SignUp--------------------\n" + UI.ANSI_RESET);
+
+        System.out.print(UI.ANSI_RED);
         switch (situation) {
             case REPEATED_PASSWORD_NOT_MATCH -> System.out.print("repeated password does not match\nplease enter again\n");
             case PASSWORD_LENGTH -> System.out.print("password must be at least 6 characters and at most 20 characters\n" +
@@ -38,7 +41,7 @@ public class SignUp {
             case USERNAME_EXISTS -> System.out.print("this username is already taken\nchoose another username\n");
             case DATA_BASE -> {
                 System.out.print("oops! we have some problem in connection :(\n" +
-                        "please try again");
+                        "please try again\n");
                 try {
                     TimeUnit.SECONDS.sleep(5);
                 } catch (InterruptedException e) {
@@ -47,7 +50,11 @@ public class SignUp {
                 }
                 UI.clearScreen();
             }
+            case SECURITY_ANSWERS_LENGTH -> System.out.println
+                    ("answer of security questions most be at least one character and at most twenty");
         }
+        System.out.print(UI.ANSI_RESET);
+
         return getInfo();
     }
 

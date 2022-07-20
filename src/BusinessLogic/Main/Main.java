@@ -4,11 +4,8 @@ import BusinessLogic.Event.Event;
 import BusinessLogic.User.User;
 import Exceptions.UserException.*;
 import Exceptions.DataBaseExceptions.*;
-import UI.HomePage;
-import UI.StartPage;
 
 import java.sql.SQLException;
-
 
 interface Response {
     Event perform();
@@ -30,10 +27,11 @@ public class Main {
     }
 
     /// main() here function as an event handler
+    /// it has a loop - run an ui function and receive an event and
+    /// analyze that to detect appropriate response to run in next iteration of loop
     public static void main(String[] args) {
 
         response = () -> UI.StartPage.startPage(UI.StartPage.StartPageSituation.EMPTY);
-
 
         do {
             event = response.perform();
@@ -85,11 +83,17 @@ public class Main {
             return;
         }
 
+        if(sec_ans1.length() > 20 || sec_ans1.isEmpty() || sec_ans2.length() > 20
+            || sec_ans2.isEmpty() || sec_ans3.length() > 20 || sec_ans3.isEmpty()) {
+            response = () -> UI.SignUp.signUp(UI.SignUp.SignUpSituation.SECURITY_ANSWERS_LENGTH);
+            return;
+        }
+
         try {
             user = new User(username, password);
             DataBase.Signup.SignUserUp(user, sec_ans1, sec_ans2, sec_ans3);
-            System.out.println("sign up successfully");
-            System.exit(0);
+            System.out.println(UI.UI.ANSI_GREEN + "sign up successfully" + UI.UI.ANSI_RESET);
+            response = () -> UI.HomePage.homePage();
         } catch (PasswordLengthException ex) {
             response = () -> UI.SignUp.signUp(UI.SignUp.SignUpSituation.PASSWORD_LENGTH);
         } catch (WeakPasswordException ex) {
@@ -132,7 +136,7 @@ public class Main {
         int user_option = Integer.parseInt(event.data[0]);
         switch (user_option) {
             case 0, 2, 1 -> exitProgram(0);
-            case 3 -> response = () -> UI.StartPage.startPage(StartPage.StartPageSituation.EMPTY);
+            case 3 -> response = () -> UI.StartPage.startPage(UI.StartPage.StartPageSituation.EMPTY);
         }
     }
 

@@ -12,15 +12,17 @@ public class Signup {
             throw new NullPointerException();
 
         Statement statement = DBConnection.getInstance().getConnection().createStatement();
-        // check if userName exists
 
+        // check if userName exists
         if(isUsernameExist(user.getUsername()))
             throw new UsernameExistException("username already exists");
 
+        // add user to database
         statement.executeUpdate("INSERT INTO USERS (UserName, Password, " +
-                "NumberOfFollowers, NumberOfFollowing) VALUES ('" +
+                "NumberOfFollowers, NumberOfFollowing, SecurityAnswer1" +
+                ", SecurityAnswer2, SecurityAnswer3) VALUES ('" +
                 user.getUsername() + "', '" + user.getPassword() + "', " +
-                "0, 0);");
+                "0, 0, '" + sec_ans1 + "', '" + sec_ans2 + "', '" + sec_ans3 + "');");
         statement.close();
     }
 
