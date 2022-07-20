@@ -15,6 +15,7 @@ public class SignIn {
 
     public static Event signIn(SignInSituation code) {
         UI.clearScreen();
+        System.out.println(UI.ANSI_BLUE + "\n--------------------SignIn--------------------\n" + UI.ANSI_RESET);
         switch (code) {
             case USERNAME_NOT_FOUND:
                 System.out.println("username does not exists");

@@ -4,6 +4,9 @@ import BusinessLogic.Event.Event;
 import BusinessLogic.User.User;
 import Exceptions.UserException.*;
 import Exceptions.DataBaseExceptions.*;
+import UI.HomePage;
+import UI.StartPage;
+
 import java.sql.SQLException;
 
 
@@ -15,24 +18,14 @@ public class Main {
 
     private static Response response;
     private static User user;
+    private static Event event;
 
 
     public enum UserRequest {
         START_PAGE,
         SIGN_UP,
         SIGN_IN,
-        SELF_PROFILE,
-        SELF_FOLLOWERS,
-        SELF_FOLLOWINGS,
-        OTHER_PROFILE,
-        SELF_POSTS,
-        SELF_POST_LIKES,
-        SELF_POST_COMMENT,
-        OTHER_FOLLOWERS,
-        OTHER_FOLLOWINGS,
-        OTHER_POSTS,
-        OTHER_POST_LIKES,
-        OTHER_POST_COMMENT,
+        HOME_PAGE,
         EXIT
     }
 
@@ -40,20 +33,21 @@ public class Main {
     public static void main(String[] args) {
 
         response = () -> UI.StartPage.startPage(UI.StartPage.StartPageSituation.EMPTY);
-        Event event;
+
 
         do {
             event = response.perform();
             switch (event.user_request) {
-                case START_PAGE -> startPage(event);
-                case SIGN_UP -> signUp(event);
-                case SIGN_IN -> signIn(event);
+                case START_PAGE -> startPage();
+                case SIGN_UP -> signUp();
+                case SIGN_IN -> signIn();
+                case HOME_PAGE -> homePage();
             }
 
         } while (true);
     }
 
-    private static void startPage(Event event) {
+    private static void startPage() {
         switch (event.data[0]) {
             case "1" -> response = () -> UI.SignUp.signUp(UI.SignUp.SignUpSituation.EMPTY);
             case "2" -> response = () -> UI.SignIn.signIn(UI.SignIn.SignInSituation.EMPTY);
@@ -62,7 +56,7 @@ public class Main {
         }
     }
 
-    private static void signUp(Event event) {
+    private static void signUp() {
         String username = null;
         String password = null;
         String rep_password = null;
@@ -113,7 +107,7 @@ public class Main {
         }
     }
 
-    private static void signIn(Event event) {
+    private static void signIn() {
         String username = null;
         String password = null;
         for(String str : event.data) {
@@ -124,13 +118,21 @@ public class Main {
         }
         try {
             user = DataBase.ReadUser.readUser(username, password);
-
+            response = () -> UI.HomePage.homePage();
         } catch (UsernameNotExistException ex) {
             response = () -> UI.SignIn.signIn(UI.SignIn.SignInSituation.USERNAME_NOT_FOUND);
         } catch (WrongPasswordException ex) {
             response = () -> UI.SignIn.signIn(UI.SignIn.SignInSituation.WRONG_PASSWORD);
         } catch (SQLException ex) {
             response = () -> UI.SignIn.signIn(UI.SignIn.SignInSituation.DATA_BASE);
+        }
+    }
+
+    private static void homePage() {
+        int user_option = Integer.parseInt(event.data[0]);
+        switch (user_option) {
+            case 0, 2, 1 -> exitProgram(0);
+            case 3 -> response = () -> UI.StartPage.startPage(StartPage.StartPageSituation.EMPTY);
         }
     }
 

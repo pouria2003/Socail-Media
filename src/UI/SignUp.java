@@ -21,42 +21,22 @@ public class SignUp {
 
     public static Event signUp(SignUpSituation situation) {
         UI.clearScreen();
+        System.out.println(UI.ANSI_BLUE + "\n--------------------SignUp--------------------\n" + UI.ANSI_RESET);
         switch (situation) {
-            case REPEATED_PASSWORD_NOT_MATCH:
-                System.out.print("repeated password does not match\nplease enter again\n");
-                break;
-
-            case PASSWORD_LENGTH:
-                System.out.print("password must be at least 6 characters and at most 20 characters\n" +
-                        "please enter again\n");
-                break;
-
-            case WEAK_PASSWORD:
-                System.out.print("password is weak\npassword must not have only lowercase or only uppercase\n" +
-                        "please enter again\n");
-                break;
-
-            case PASSWORD_FORMAT:
-                System.out.print("password must include only lowercase letter, uppercase letter, digits " +
-                        " and @-#-.-* signs\nplease enter again\n");
-                break;
-
-            case USERNAME_LENGTH:
-                System.out.print("username must have at least 3 characters and at most 20 characters\n" +
-                        "please enter again\n");
-                break;
-
-            case USERNAME_FORMAT:
-                System.out.print("username must include only lowercase letter, uppercase letter, " +
-                        "digits and under line sign\nusername must starts with a letter\n" +
-                        "please enter again\n");
-                break;
-
-            case USERNAME_EXISTS:
-                System.out.print("this username is already taken\nchoose another username\n");
-                break;
-
-            case DATA_BASE:
+            case REPEATED_PASSWORD_NOT_MATCH -> System.out.print("repeated password does not match\nplease enter again\n");
+            case PASSWORD_LENGTH -> System.out.print("password must be at least 6 characters and at most 20 characters\n" +
+                    "please enter again\n");
+            case WEAK_PASSWORD -> System.out.print("password is weak\npassword must not have only lowercase or only uppercase\n" +
+                    "please enter again\n");
+            case PASSWORD_FORMAT -> System.out.print("password must include only lowercase letter, uppercase letter, digits " +
+                    " and @-#-.-* signs\nplease enter again\n");
+            case USERNAME_LENGTH -> System.out.print("username must have at least 3 characters and at most 20 characters\n" +
+                    "please enter again\n");
+            case USERNAME_FORMAT -> System.out.print("username must include only lowercase letter, uppercase letter, " +
+                    "digits and under line sign\nusername must starts with a letter\n" +
+                    "please enter again\n");
+            case USERNAME_EXISTS -> System.out.print("this username is already taken\nchoose another username\n");
+            case DATA_BASE -> {
                 System.out.print("oops! we have some problem in connection :(\n" +
                         "please try again");
                 try {
@@ -66,7 +46,7 @@ public class SignUp {
                     System.exit(0);
                 }
                 UI.clearScreen();
-                break;
+            }
         }
         return getInfo();
     }
@@ -87,7 +67,7 @@ public class SignUp {
         repeated_password = UI.scanner.nextLine();
 
         UI.clearScreen();
-        System.out.println("here is three security questions will help you to recover your password later\n");
+        System.out.println("\nhere is three security questions will help you to recover your password later\n");
         System.out.print("In what city were you born? : ");
         sec_answer1 = UI.scanner.nextLine();
         System.out.print("What is the name of your favorite pet? : ");

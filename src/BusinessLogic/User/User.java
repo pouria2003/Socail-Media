@@ -33,8 +33,6 @@ public class User {
     private void setUsername(String username)
             throws IllegalStateException, SQLException {
         UsernameValidation(username);
-        if(DataBase.Signup.isUsernameExist(username))
-            throw new UsernameExistException();
         this.username = username;
     }
 

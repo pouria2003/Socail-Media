@@ -10,6 +10,7 @@ public class StartPage {
     }
 
     public static Event startPage(StartPageSituation situation) {
+        System.out.println(UI.ANSI_BLUE + "\n--------------------StartPage--------------------\n" + UI.ANSI_RESET);
         if(situation == StartPageSituation.INVALID_OPTION)
             System.out.println("invalid option given");
         System.out.println("-Welcome to program");
