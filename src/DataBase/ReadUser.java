@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class ReadUser {
+    /// if password equals to null then function will not check password
     public static User readUser(String userName, String password) throws SQLException {
         Statement statement = DBConnection.getInstance().getConnection().createStatement();
         ResultSet resultSet = statement.executeQuery("SELECT * FROM Users WHERE UserName = '" +
@@ -19,7 +20,7 @@ public class ReadUser {
             statement.close();
             throw new UsernameNotExistException("User does not exists");
         }
-        if(!resultSet.getString("Password").equals(password)){
+        if(password != null && !resultSet.getString("Password").equals(password)){
             resultSet.close();
             statement.close();
             throw new WrongPasswordException("password is not correct");

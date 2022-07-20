@@ -16,26 +16,29 @@ public class SignIn {
     public static Event signIn(SignInSituation code) {
         UI.clearScreen();
         System.out.println(UI.ANSI_BLUE + "\n--------------------SignIn--------------------\n" + UI.ANSI_RESET);
+
+        System.out.print(UI.ANSI_RED);
         switch (code) {
             case USERNAME_NOT_FOUND:
-                System.out.println("username does not exists");
+                System.out.println("username does not exists\n");
                 break;
             case WRONG_PASSWORD:
-                System.out.println("wrong password");
+                System.out.println("wrong password\n");
                 break;
             case DATA_BASE:
                 System.out.println("oops! we have some problem in connection :(\n" +
-                        "please try again");
+                        "please try again\n");
                 try {
                     TimeUnit.SECONDS.sleep(5);
                 } catch (InterruptedException e) {
-                    System.out.print("something went wrong\nplease try later");
+                    System.out.print("something went wrong\nplease try later\n");
                     System.exit(0);
                 }
                 UI.clearScreen();
                 break;
-
         }
+        System.out.println(UI.ANSI_RESET);
+
         return getInfo();
     }
 

@@ -2,6 +2,7 @@ package BusinessLogic.Main;
 
 import BusinessLogic.Event.Event;
 import BusinessLogic.User.User;
+import DataBase.ReadUser;
 import Exceptions.UserException.*;
 import Exceptions.DataBaseExceptions.*;
 import UI.Search;
@@ -26,6 +27,7 @@ public class Main {
         SIGN_IN,
         HOME_PAGE,
         SEARCH,
+        PROFILE,
         EXIT
     }
 
@@ -44,6 +46,7 @@ public class Main {
                 case SIGN_IN -> signIn();
                 case HOME_PAGE -> homePage();
                 case SEARCH -> search();
+                case PROFILE -> profile();
             }
 
         } while (true);
@@ -151,17 +154,23 @@ public class Main {
             response = () -> UI.HomePage.homePage();
             return;
         }
+
         try {
-            if(DataBase.Signup.isUsernameExist(username)){
-                System.out.println("found");
-                response = () -> UI.HomePage.homePage();
-                searched_username = username;
-            }
-            else
-                response = () -> UI.Search.search(Search.SearchStatus.UsernameNotExist, username);
-        } catch (SQLException e) {
+            /// null for password means readUser() will not check if password matches or not
+            User other_user = ReadUser.readUser(username, null);
+
+            response = () -> UI.Profile.profile(other_user);
+            searched_username = username;
+
+        } catch (UsernameNotExistException ex) {
+            response = () -> UI.Search.search(Search.SearchStatus.UsernameNotExist, username);
+        }  catch (SQLException e) {
             response = () -> UI.Search.search(Search.SearchStatus.DataBaseProblem, null);
         }
+    }
+
+    private static void profile() {
+        response = () -> UI.HomePage.homePage();
     }
 
     private static void exitProgram(int code) {

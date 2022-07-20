@@ -64,6 +64,10 @@ public class User {
         return password;
     }
 
+    public int getNumberOfFollowers() { return number_of_followers; }
+
+    public int getNumberOfFollowings() { return number_of_followings; }
+
     // if username is valid nothing happens otherwise throws exception
     public static void UsernameValidation(String username)
             throws IllegalStateException {
