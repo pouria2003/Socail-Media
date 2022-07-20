@@ -2,7 +2,6 @@ package UI;
 
 import java.util.Scanner;
 
-
 public class UI {
     static final Scanner scanner = new Scanner(System.in);
 

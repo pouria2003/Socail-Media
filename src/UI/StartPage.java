@@ -9,8 +9,8 @@ public class StartPage {
         INVALID_OPTION
     }
 
-    public static Event startPage(StartPageSituation code) {
-        if(code == StartPageSituation.INVALID_OPTION)
+    public static Event startPage(StartPageSituation situation) {
+        if(situation == StartPageSituation.INVALID_OPTION)
             System.out.println("invalid option given");
         System.out.println("-Welcome to program");
         System.out.println("-press Backspace to go to previous step");
@@ -21,6 +21,7 @@ public class StartPage {
 
         System.out.print("Enter your option : ");
         int option = UI.scanner.nextInt();
+        UI.scanner.nextLine();
         return new Event(Main.UserRequest.START_PAGE, Integer.toString(option));
 
     }

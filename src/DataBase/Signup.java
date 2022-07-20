@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Signup {
-    public static void SignUserUp(User user) throws SQLException {
+    public static void SignUserUp(User user, String sec_ans1, String sec_ans2, String sec_ans3) throws SQLException {
         if(user == null)
             throw new NullPointerException();
 

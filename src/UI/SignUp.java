@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 public class SignUp {
 
-
     public enum SignUpSituation {
         EMPTY,
         REPEATED_PASSWORD_NOT_MATCH,
@@ -20,9 +19,9 @@ public class SignUp {
         DATA_BASE
     }
 
-    public static Event signUp(SignUpSituation code) {
+    public static Event signUp(SignUpSituation situation) {
         UI.clearScreen();
-        switch (code ) {
+        switch (situation) {
             case REPEATED_PASSWORD_NOT_MATCH:
                 System.out.print("repeated password does not match\nplease enter again\n");
                 break;
@@ -76,6 +75,9 @@ public class SignUp {
         String user_name;
         String password;
         String repeated_password;
+        String sec_answer1;
+        String sec_answer2;
+        String sec_answer3;
 
         System.out.print("username : ");
         user_name = UI.scanner.nextLine();
@@ -83,8 +85,19 @@ public class SignUp {
         password = UI.scanner.nextLine();
         System.out.print("repeat password : ");
         repeated_password = UI.scanner.nextLine();
+
+        UI.clearScreen();
+        System.out.println("here is three security questions will help you to recover your password later\n");
+        System.out.print("In what city were you born? : ");
+        sec_answer1 = UI.scanner.nextLine();
+        System.out.print("What is the name of your favorite pet? : ");
+        sec_answer2 = UI.scanner.nextLine();
+        System.out.print("What is the name of your first school? : ");
+        sec_answer3 = UI.scanner.nextLine();
+
         return new Event(Main.UserRequest.SIGN_UP, "username="+user_name,
-                "password="+password, "repeatedpassword="+repeated_password);
+                "password="+password, "repeatedpassword="+repeated_password,
+                "sec_ans1=" + sec_answer1, "sec_ans2=" + sec_answer2, "sec_ans3=" + sec_answer3);
     }
 
 }
