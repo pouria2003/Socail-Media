@@ -1,10 +1,6 @@
 package BusinessLogic.User;
 
-import DataBase.DeleteFollower;
-import DataBase.Follow;
 import Exceptions.UserException.*;
-import Exceptions.DataBaseExceptions.UsernameExistException;
-
 
 import java.sql.SQLException;
 
@@ -55,6 +51,14 @@ public class User {
             throw new IllegalStateException("Number of followings can not be a negative integer");
         this.number_of_followings = number_of_followings;
     }
+
+    public void addFollower() { ++number_of_followers; }
+
+    public void removeFollower() { --number_of_followers; }
+
+    public void addFollowing() { ++number_of_followings; }
+
+    public void removeFollowing() { --number_of_followings; }
 
     public String getUsername() {
         return username;

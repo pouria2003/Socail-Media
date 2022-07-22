@@ -13,12 +13,12 @@ public class SignIn {
         DATA_BASE
     }
 
-    public static Event signIn(SignInSituation code) {
+    public static Event signIn(SignInSituation situation) {
         UI.clearScreen();
         System.out.println(UI.ANSI_BLUE + "\n--------------------SignIn--------------------\n" + UI.ANSI_RESET);
 
         System.out.print(UI.ANSI_RED);
-        switch (code) {
+        switch (situation) {
             case USERNAME_NOT_FOUND:
                 System.out.println("username does not exists\n");
                 break;

@@ -4,10 +4,16 @@ import BusinessLogic.Event.Event;
 import BusinessLogic.Main.Main;
 import BusinessLogic.User.User;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 
 public class Profile {
-    public static Event profile(User user) {
+
+    public enum ProfileSituation {
+        NORMAL, DATABASE_EXCEPTION
+    }
+
+    public static Event profile(User user, boolean doesFollow, ProfileSituation situation) {
         int user_option = 0;
         boolean invalid_option = false;
         do {
@@ -20,8 +26,13 @@ public class Profile {
                     user.getNumberOfFollowings());
             System.out.println(UI.ANSI_RESET);
 
+            if(situation == ProfileSituation.DATABASE_EXCEPTION) {
+                System.out.println(UI.ANSI_RED + "we have some problem with connecting to database\n" +
+                        "please try later" + UI.ANSI_RESET);
+            }
+
             System.out.println("0 - back");
-            System.out.println("1 - follow");
+            System.out.println("1 - " + ((doesFollow) ? "unfollow" : "follow"));
             System.out.println("2 - followers");
             System.out.println("3 - followings");
 
@@ -45,5 +56,24 @@ public class Profile {
         } while(invalid_option);
 
         return new Event(Main.UserRequest.PROFILE, Integer.toString(user_option));
+    }
+
+    public static Event followersOrFollowings(ArrayList<String> usernames, boolean followers
+            /* true = followers - false = followings */) {
+        boolean invalid_option = false;
+        do {
+            UI.clearScreen();
+            System.out.println(UI.ANSI_BLUE + "\n--------------------" + ((followers) ? "Followers" : "Followings")
+                    + "--------------------\n" + UI.ANSI_RESET);
+
+            for(int i = 0; i < usernames.size(); ++i)
+                System.out.println(i + " - " + usernames.get(i));
+
+            System.out.println("\nEnter any key to go back : ");
+            UI.scanner.nextLine();
+
+            return new Event(Main.UserRequest.FollowList);
+
+        } while(invalid_option);
     }
 }

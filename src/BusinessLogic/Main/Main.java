@@ -5,12 +5,13 @@ import BusinessLogic.User.User;
 import DataBase.ReadUser;
 import Exceptions.UserException.*;
 import Exceptions.DataBaseExceptions.*;
+import UI.Profile;
 import UI.Search;
 
 import java.sql.SQLException;
 
 interface Response {
-    Event perform();
+    Event perform() throws SQLException;
 }
 
 public class Main {
@@ -18,7 +19,7 @@ public class Main {
     private static Response response;
     private static User user;
     private static Event event;
-    private static String searched_username;
+    private static User searched_user;
 
 
     public enum UserRequest {
@@ -28,6 +29,7 @@ public class Main {
         HOME_PAGE,
         SEARCH,
         PROFILE,
+        FollowList,
         EXIT
     }
 
@@ -39,14 +41,25 @@ public class Main {
         response = () -> UI.StartPage.startPage(UI.StartPage.StartPageSituation.EMPTY);
 
         do {
-            event = response.perform();
-            switch (event.user_request) {
-                case START_PAGE -> startPage();
-                case SIGN_UP -> signUp();
-                case SIGN_IN -> signIn();
-                case HOME_PAGE -> homePage();
-                case SEARCH -> search();
-                case PROFILE -> profile();
+            try {
+                event = response.perform();
+
+                switch (event.user_request) {
+                    case START_PAGE -> startPage();
+                    case SIGN_UP -> signUp();
+                    case SIGN_IN -> signIn();
+                    case HOME_PAGE -> homePage();
+                    case SEARCH -> search();
+                    case PROFILE -> profile();
+                    case FollowList -> response = () -> UI.Profile.profile(searched_user, DataBase.Follow.doesFollow(
+                            user.getUsername(), searched_user.getUsername()), Profile.ProfileSituation.NORMAL);
+                }
+            } catch (SQLException e) {
+                System.out.println(UI.UI.ANSI_RED + "we have some problem with connecting to database\n" +
+                        "please try later" + UI.UI.ANSI_RESET);
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+                exitProgram(0);
             }
 
         } while (true);
@@ -143,7 +156,7 @@ public class Main {
         int user_option = Integer.parseInt(event.data[0]);
         switch (user_option) {
             case 0, 1 -> exitProgram(0);
-            case 2 -> response = () -> UI.Search.search(Search.SearchStatus.Normal, null);
+            case 2 -> response = () -> UI.Search.search(UI.Search.SearchSituation.Normal, null);
             case 3 -> response = () -> UI.StartPage.startPage(UI.StartPage.StartPageSituation.EMPTY);
         }
     }
@@ -159,18 +172,62 @@ public class Main {
             /// null for password means readUser() will not check if password matches or not
             User other_user = ReadUser.readUser(username, null);
 
-            response = () -> UI.Profile.profile(other_user);
-            searched_username = username;
+            response = () -> Profile.profile(other_user, DataBase.Follow.doesFollow(
+                    user.getUsername(), other_user.getUsername()), Profile.ProfileSituation.NORMAL);
+            searched_user = other_user;
 
         } catch (UsernameNotExistException ex) {
-            response = () -> UI.Search.search(Search.SearchStatus.UsernameNotExist, username);
+            response = () -> UI.Search.search(UI.Search.SearchSituation.UsernameNotExist, username);
         }  catch (SQLException e) {
-            response = () -> UI.Search.search(Search.SearchStatus.DataBaseProblem, null);
+            response = () -> UI.Search.search(UI.Search.SearchSituation.DataBaseProblem, null);
         }
     }
 
     private static void profile() {
-        response = () -> UI.HomePage.homePage();
+        int user_option = Integer.parseInt(event.data[0]);
+        if(user_option == 0) {
+            response = () -> UI.Search.search(Search.SearchSituation.Normal, null);
+        }
+        else if(user_option == 1) {
+            try {
+                if(DataBase.Follow.doesFollow(user.getUsername(), searched_user.getUsername())) {
+                    DataBase.Follow.unfollow(user.getUsername(), searched_user.getUsername(),
+                            user.getNumberOfFollowings() - 1, searched_user.getNumberOfFollowers() - 1);
+                    user.removeFollowing();
+                    searched_user.removeFollower();
+                }
+                else {
+                    DataBase.Follow.follow(user.getUsername(), searched_user.getUsername(),
+                            user.getNumberOfFollowings() + 1, searched_user.getNumberOfFollowers() + 1);
+                    user.addFollowing();
+                    searched_user.removeFollower();
+                }
+                response = () -> UI.Profile.profile(searched_user,
+                        DataBase.Follow.doesFollow(user.getUsername(), searched_user.getUsername()),
+                        Profile.ProfileSituation.NORMAL);
+            } catch (SQLException e) {
+                response = () -> UI.Profile.profile(searched_user,
+                        DataBase.Follow.doesFollow(user.getUsername(), searched_user.getUsername()),
+                        Profile.ProfileSituation.DATABASE_EXCEPTION);
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+            }
+        }
+        else if(user_option == 2) {
+            try {
+                Profile.followersOrFollowings(DataBase.Follow.followersList(searched_user.getUsername()), true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(user_option == 3) {
+            try {
+                Profile.followersOrFollowings(DataBase.Follow.followingsList(searched_user.getUsername()), false);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     private static void exitProgram(int code) {
