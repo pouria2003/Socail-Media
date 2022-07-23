@@ -5,6 +5,7 @@ import BusinessLogic.User.User;
 import DataBase.ReadUser;
 import Exceptions.UserException.*;
 import Exceptions.DataBaseExceptions.*;
+import UI.MyProfile;
 import UI.Profile;
 import UI.Search;
 
@@ -29,7 +30,10 @@ public class Main {
         HOME_PAGE,
         SEARCH,
         PROFILE,
-        FollowList,
+        FOLLOW_LIST,
+        MY_PROFILE,
+        MY_FOLLOWERS_LIST,
+        MY_FOLLOWINGS_LIST,
         EXIT
     }
 
@@ -51,8 +55,11 @@ public class Main {
                     case HOME_PAGE -> homePage();
                     case SEARCH -> search();
                     case PROFILE -> profile();
-                    case FollowList -> response = () -> UI.Profile.profile(searched_user, DataBase.Follow.doesFollow(
+                    case FOLLOW_LIST -> response = () -> UI.Profile.profile(searched_user, DataBase.Follow.doesFollow(
                             user.getUsername(), searched_user.getUsername()), Profile.ProfileSituation.NORMAL);
+                    case MY_PROFILE -> myProfile();
+                    case MY_FOLLOWERS_LIST -> myFollowersList();
+                    case MY_FOLLOWINGS_LIST -> myFollowingsList();
                 }
             } catch (SQLException e) {
                 System.out.println(UI.UI.ANSI_RED + "we have some problem with connecting to database\n" +
@@ -155,7 +162,8 @@ public class Main {
     private static void homePage() {
         int user_option = Integer.parseInt(event.data[0]);
         switch (user_option) {
-            case 0, 1 -> exitProgram(0);
+            case 0 -> exitProgram(0);
+            case 1 -> response = () -> UI.MyProfile.myProfile(user, Profile.ProfileSituation.NORMAL);
             case 2 -> response = () -> UI.Search.search(UI.Search.SearchSituation.Normal, null);
             case 3 -> response = () -> UI.StartPage.startPage(UI.StartPage.StartPageSituation.EMPTY);
         }
@@ -200,7 +208,7 @@ public class Main {
                     DataBase.Follow.follow(user.getUsername(), searched_user.getUsername(),
                             user.getNumberOfFollowings() + 1, searched_user.getNumberOfFollowers() + 1);
                     user.addFollowing();
-                    searched_user.removeFollower();
+                    searched_user.addFollower();
                 }
                 response = () -> UI.Profile.profile(searched_user,
                         DataBase.Follow.doesFollow(user.getUsername(), searched_user.getUsername()),
@@ -213,24 +221,79 @@ public class Main {
                 System.out.println(e.getMessage());
             }
         }
+        /// TODO : handle sql exception in get follow list properly
+
+        /// not updating response means execute previous response again
         else if(user_option == 2) {
-            try {
-                Profile.followersOrFollowings(DataBase.Follow.followersList(searched_user.getUsername()), true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            response = () -> Profile.followersOrFollowings(DataBase.Follow.followersList(searched_user.getUsername()),
+                    searched_user.getUsername(), true);
         }
         else if(user_option == 3) {
-            try {
-                Profile.followersOrFollowings(DataBase.Follow.followingsList(searched_user.getUsername()), false);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            response = () -> Profile.followersOrFollowings(DataBase.Follow.followingsList(searched_user.getUsername()),
+                    searched_user.getUsername(), false);
         }
 
     }
 
-    private static void exitProgram(int code) {
+    private static void myProfile() {
+        int user_option = Integer.parseInt(event.data[0]);
+        if(user_option == 0) {
+            response = () -> UI.HomePage.homePage();
+        }
+        /// TODO : handle sql exception in get follow list properly
+
+        else if(user_option == 1) {
+            response = () -> MyProfile.myFollowersList(DataBase.Follow.followersList(user.getUsername()));
+        }
+        else if(user_option == 2) {
+            response = () -> MyProfile.myFollowingsList(DataBase.Follow.followingsList(user.getUsername()));
+        }
+    }
+
+    private static void myFollowersList() {
+        String user_choice = event.data[0];
+        if(user_choice.equals("0")) {
+            response = () -> UI.MyProfile.myProfile(user, Profile.ProfileSituation.NORMAL);
+        }
+        else {
+
+            try {
+                User other_user = DataBase.ReadUser.readUser(user_choice, null);
+                DataBase.Follow.unfollow(user_choice, user.getUsername(),
+                        other_user.getNumberOfFollowings() - 1,
+                        user.getNumberOfFollowers() - 1);
+
+                user.removeFollower();
+                other_user.removeFollowing();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void myFollowingsList() {
+        String user_choice = event.data[0];
+        if(user_choice.equals("0")) {
+            response = () -> UI.MyProfile.myProfile(user, Profile.ProfileSituation.NORMAL);
+        }
+        else {
+            System.out.println("--" + user_choice + "--");
+            try {
+                User other_user = DataBase.ReadUser.readUser(user_choice, null);
+                DataBase.Follow.unfollow(user.getUsername(), user_choice,
+                        user.getNumberOfFollowings() - 1,
+                        other_user.getNumberOfFollowers() - 1);
+
+                user.removeFollowing();
+                other_user.removeFollower();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void exitProgram(int code) {
         System.exit(code);
     }
 

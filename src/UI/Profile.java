@@ -58,7 +58,7 @@ public class Profile {
         return new Event(Main.UserRequest.PROFILE, Integer.toString(user_option));
     }
 
-    public static Event followersOrFollowings(ArrayList<String> usernames, boolean followers
+    public static Event followersOrFollowings(ArrayList<String> usernames, String username, boolean followers
             /* true = followers - false = followings */) {
         boolean invalid_option = false;
         do {
@@ -66,13 +66,17 @@ public class Profile {
             System.out.println(UI.ANSI_BLUE + "\n--------------------" + ((followers) ? "Followers" : "Followings")
                     + "--------------------\n" + UI.ANSI_RESET);
 
-            for(int i = 0; i < usernames.size(); ++i)
-                System.out.println(i + " - " + usernames.get(i));
+            System.out.print(UI.ANSI_PURPLE);
+            System.out.println("                " + username);
+            System.out.println(UI.ANSI_RESET);
 
-            System.out.println("\nEnter any key to go back : ");
+            for(int i = 0; i < usernames.size(); ++i)
+                System.out.println((i + 1) + " - " + usernames.get(i));
+
+            System.out.print("\nEnter any key to go back : ");
             UI.scanner.nextLine();
 
-            return new Event(Main.UserRequest.FollowList);
+            return new Event(Main.UserRequest.FOLLOW_LIST);
 
         } while(invalid_option);
     }

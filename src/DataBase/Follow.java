@@ -62,6 +62,8 @@ public class Follow {
         statement.executeUpdate("UPDATE Users SET NumberOfFollowers = " + followings_follower_num +
                 " WHERE Username = '" + following_username + "';");
 
+        System.out.println(follower_username + " unfollowed " + following_username);
+
         statement.close();
     }
 
@@ -73,7 +75,7 @@ public class Follow {
                 "FollowingUsername = '" + username + "';");
 
         while(resultset.next())
-            result.add(resultset.getString(0));
+            result.add(resultset.getString(1));
 
         return result;
     }
@@ -86,7 +88,7 @@ public class Follow {
                 "FollowerUsername = '" + username + "';");
 
         while(resultset.next())
-            result.add(resultset.getString(0));
+            result.add(resultset.getString(1));
 
         return result;
     }
