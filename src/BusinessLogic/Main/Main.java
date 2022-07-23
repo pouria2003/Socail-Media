@@ -36,6 +36,8 @@ public class Main {
         MY_FOLLOWERS_LIST,
         MY_FOLLOWINGS_LIST,
         NEW_POST,
+        POSTS,
+        POST,
         EXIT
     }
 
@@ -63,6 +65,8 @@ public class Main {
                     case MY_FOLLOWERS_LIST -> myFollowersList();
                     case MY_FOLLOWINGS_LIST -> myFollowingsList();
                     case NEW_POST -> newPost();
+                    case POSTS -> posts();
+                    case POST -> post();
                 }
             } catch (SQLException e) {
                 System.out.println(UI.UI.ANSI_RED + "we have some problem with connecting to database\n" +
@@ -226,12 +230,16 @@ public class Main {
         }
         /// TODO : handle sql exception in get follow list properly
 
-        /// not updating response means execute previous response again
         else if(user_option == 2) {
+            response = () -> UI.Profile.posts(DataBase.Post.PostsList(searched_user.getUsername()), searched_user.getUsername());
+        }
+
+        /// not updating response means execute previous response again
+        else if(user_option == 3) {
             response = () -> Profile.followersOrFollowings(DataBase.Follow.followersList(searched_user.getUsername()),
                     searched_user.getUsername(), true);
         }
-        else if(user_option == 3) {
+        else if(user_option == 4) {
             response = () -> Profile.followersOrFollowings(DataBase.Follow.followingsList(searched_user.getUsername()),
                     searched_user.getUsername(), false);
         }
@@ -243,15 +251,19 @@ public class Main {
         if(user_option == 0) {
             response = () -> UI.HomePage.homePage();
         }
+
         /// TODO : handle sql exception in get follow list properly
 
         else if(user_option == 1) {
-            response = () -> MyProfile.myFollowersList(DataBase.Follow.followersList(user.getUsername()));
+            response = () -> UI.MyProfile.myPosts(DataBase.Post.PostsList(user.getUsername()));
         }
         else if(user_option == 2) {
-            response = () -> MyProfile.myFollowingsList(DataBase.Follow.followingsList(user.getUsername()));
+            response = () -> MyProfile.myFollowersList(DataBase.Follow.followersList(user.getUsername()));
         }
         else if(user_option == 3) {
+            response = () -> MyProfile.myFollowingsList(DataBase.Follow.followingsList(user.getUsername()));
+        }
+        else if(user_option == 4) {
             response = () -> UI.MyProfile.newPost(false);
         }
     }
@@ -300,13 +312,13 @@ public class Main {
     }
 
     /// TODO : handle sql exception
-    public static void newPost() {
+    private static void newPost() {
         String post_id = user.getUsername() + "_" + ( user.getLastPostId() + 1 );
         try {
-            Post post = new Post(event.data[0], post_id);
-            DataBase.AddPost.addPost(post);
-            System.out.println(post.getContent() + " __ " + post.getId());
+            Post post = new Post(event.data[0], post_id, 0);
+            DataBase.Post.addPost(post, user.getUsername());
             user.addPost();
+            response = () -> UI.MyProfile.myProfile(user, Profile.ProfileSituation.NORMAL);
         }
         catch (PostLengthException ex) {
             response = () -> UI.MyProfile.newPost(true);
@@ -314,6 +326,22 @@ public class Main {
             e.printStackTrace();
         }
 
+    }
+
+    private static void posts() {
+        String user_choice = event.data[0];
+        if(user_choice.equals("0")) {
+            response = () -> UI.Profile.profile(searched_user, DataBase.Follow.doesFollow(
+                    user.getUsername(), searched_user.getUsername()), Profile.ProfileSituation.NORMAL);
+        }
+        else {
+            response = () -> UI.Profile.post(DataBase.Post.post(event.data[0]), searched_user.getUsername());
+        }
+    }
+
+    private static void post() {
+        response = () -> UI.Profile.posts(DataBase.Post.PostsList(searched_user.getUsername()),
+                searched_user.getUsername());
     }
 
     public static void exitProgram(int code) {

@@ -26,7 +26,8 @@ public class ReadUser {
             throw new WrongPasswordException("password is not correct");
         }
         User user = new User(resultSet.getString("UserName"), resultSet.getString("Password"),
-                resultSet.getInt("NumberOfFollowers"), resultSet.getInt("NumberOfFollowing"));
+                resultSet.getInt("NumberOfFollowers"), resultSet.getInt("NumberOfFollowing"),
+                resultSet.getInt("NumberOfPosts"), resultSet.getInt("LastPostId"));
         resultSet.close();
         statement.close();
         return user;

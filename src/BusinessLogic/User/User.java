@@ -9,7 +9,7 @@ public class User {
     private String password;
     private int number_of_followers;
     private int number_of_followings;
-    private int number_of_post;
+    private int number_of_posts;
     private int last_post_id; /// this is number of post but does not decrease with deleting post
 
     public User(String username, String password)
@@ -18,17 +18,18 @@ public class User {
         setPassword(password);
         setNumberOfFollowings(0);
         setNumberOfFollowers(0);
-        number_of_post = 0;
+        number_of_posts = 0;
         last_post_id = 0;
     }
 
-    public User(String username, String password, int number_of_followers, int number_of_followings)
+    public User(String username, String password, int number_of_followers, int number_of_followings,
+                int number_of_posts, int last_post_id)
             throws IllegalStateException, SQLException {
         setUsername(username);
         setPassword(password);
         setNumberOfFollowers(number_of_followers);
         setNumberOfFollowings(number_of_followings);
-        number_of_post = 0;
+        number_of_posts = 0;
         last_post_id = 0;
     }
 
@@ -99,7 +100,7 @@ public class User {
     }
 
     public int getNumberOfPost() {
-        return number_of_post;
+        return number_of_posts;
     }
 
     public int getLastPostId() {
@@ -107,7 +108,7 @@ public class User {
     }
 
     public void addPost() {
-        ++number_of_post;
+        ++number_of_posts;
         ++last_post_id;
     }
 }

@@ -2,6 +2,7 @@ package UI;
 
 import BusinessLogic.Event.Event;
 import BusinessLogic.Main.Main;
+import BusinessLogic.Post.Post;
 import BusinessLogic.User.User;
 
 import java.util.ArrayList;
@@ -28,9 +29,10 @@ public class MyProfile {
             }
 
             System.out.println("0 - back");
-            System.out.println("1 - followers");
-            System.out.println("2 - followings");
-            System.out.println("3 - new post");
+            System.out.println("1 - posts");
+            System.out.println("2 - followers");
+            System.out.println("3 - followings");
+            System.out.println("4 - new post");
 
             if(invalid_option)
                 System.out.println(UI.ANSI_RED + "invalid option given" + UI.ANSI_RESET);
@@ -42,7 +44,7 @@ public class MyProfile {
                 /// get enter
                 UI.scanner.nextLine();
 
-                invalid_option = user_option < 0 || user_option > 3;
+                invalid_option = user_option < 0 || user_option > 4;
 
             } catch (InputMismatchException ex) {
                 System.out.println(UI.ANSI_RED + "invalid option given" + UI.ANSI_RESET);
@@ -125,6 +127,40 @@ public class MyProfile {
         String content = UI.scanner.nextLine();
 
         return new Event(Main.UserRequest.NEW_POST, content);
+
+    }
+
+    public static Event myPosts(ArrayList<Post> posts) {
+        int user_option = 0;
+        boolean invalid_option = false;
+        do {
+            UI.clearScreen();
+            System.out.println(UI.ANSI_BLUE + "\n--------------------Posts--------------------\n" + UI.ANSI_RESET);
+
+            for (int i = 0; i < posts.size(); ++i) {
+                System.out.println(UI.ANSI_CYAN + (i + 1) + " - " + posts.get(i).getContent().substring(0,
+                        (Math.min(posts.get(i).getContent().length(), 30))));
+                System.out.println(UI.ANSI_YELLOW + "  " + posts.get(i).getLikes() + " like" + UI.ANSI_RESET);
+            }
+            System.out.print(UI.ANSI_RESET);
+
+            if(invalid_option)
+                System.out.println(UI.ANSI_RED + "\ninvalid option given" + UI.ANSI_RESET);
+
+            System.out.println("\n-enter number of post to see post");
+            System.out.println("-enter 0 to go back");
+            System.out.print("enter your option : ");
+            user_option = UI.scanner.nextInt();
+
+            /// get enter
+            UI.scanner.nextLine();
+
+            invalid_option = user_option < 0 || user_option > posts.size();
+
+        } while(invalid_option);
+
+        /// return "0" if user option iz 0 otherwise return post id
+        return new Event(Main.UserRequest.MY_POSTS, (user_option == 0) ? "0" : posts.get(user_option - 1).getId());
 
     }
 }
