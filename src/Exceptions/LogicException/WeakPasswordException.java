@@ -1,4 +1,4 @@
-package Exceptions.UserException;
+package Exceptions.LogicException;
 
 public class WeakPasswordException extends IllegalStateException {
     public WeakPasswordException() { super(); }

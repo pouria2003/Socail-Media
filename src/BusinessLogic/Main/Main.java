@@ -1,9 +1,10 @@
 package BusinessLogic.Main;
 
 import BusinessLogic.Event.Event;
+import BusinessLogic.Post.Post;
 import BusinessLogic.User.User;
 import DataBase.ReadUser;
-import Exceptions.UserException.*;
+import Exceptions.LogicException.*;
 import Exceptions.DataBaseExceptions.*;
 import UI.MyProfile;
 import UI.Profile;
@@ -34,6 +35,7 @@ public class Main {
         MY_PROFILE,
         MY_FOLLOWERS_LIST,
         MY_FOLLOWINGS_LIST,
+        NEW_POST,
         EXIT
     }
 
@@ -60,6 +62,7 @@ public class Main {
                     case MY_PROFILE -> myProfile();
                     case MY_FOLLOWERS_LIST -> myFollowersList();
                     case MY_FOLLOWINGS_LIST -> myFollowingsList();
+                    case NEW_POST -> newPost();
                 }
             } catch (SQLException e) {
                 System.out.println(UI.UI.ANSI_RED + "we have some problem with connecting to database\n" +
@@ -248,6 +251,9 @@ public class Main {
         else if(user_option == 2) {
             response = () -> MyProfile.myFollowingsList(DataBase.Follow.followingsList(user.getUsername()));
         }
+        else if(user_option == 3) {
+            response = () -> UI.MyProfile.newPost(false);
+        }
     }
 
     private static void myFollowersList() {
@@ -291,6 +297,23 @@ public class Main {
                 e.printStackTrace();
             }
         }
+    }
+
+    /// TODO : handle sql exception
+    public static void newPost() {
+        String post_id = user.getUsername() + "_" + ( user.getLastPostId() + 1 );
+        try {
+            Post post = new Post(event.data[0], post_id);
+            DataBase.AddPost.addPost(post);
+            System.out.println(post.getContent() + " __ " + post.getId());
+            user.addPost();
+        }
+        catch (PostLengthException ex) {
+            response = () -> UI.MyProfile.newPost(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void exitProgram(int code) {

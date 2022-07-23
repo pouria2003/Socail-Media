@@ -1,4 +1,4 @@
-package Exceptions.UserException;
+package Exceptions.LogicException;
 
 public class PasswordFormatException extends IllegalStateException {
     public PasswordFormatException() { super(); }

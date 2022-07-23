@@ -30,6 +30,7 @@ public class MyProfile {
             System.out.println("0 - back");
             System.out.println("1 - followers");
             System.out.println("2 - followings");
+            System.out.println("3 - new post");
 
             if(invalid_option)
                 System.out.println(UI.ANSI_RED + "invalid option given" + UI.ANSI_RESET);
@@ -41,7 +42,7 @@ public class MyProfile {
                 /// get enter
                 UI.scanner.nextLine();
 
-                invalid_option = user_option < 0 || user_option > 2;
+                invalid_option = user_option < 0 || user_option > 3;
 
             } catch (InputMismatchException ex) {
                 System.out.println(UI.ANSI_RED + "invalid option given" + UI.ANSI_RESET);
@@ -111,5 +112,19 @@ public class MyProfile {
         } while(invalid_option);
 
         return new Event(Main.UserRequest.MY_FOLLOWINGS_LIST, (user_option == 0) ? "0" : followings.get(user_option - 1));
+    }
+
+    public static Event newPost(boolean length_exception) {
+        System.out.println(UI.ANSI_BLUE + "\n--------------------New Post--------------------\n" + UI.ANSI_RESET);
+
+        if(length_exception)
+            System.out.println(UI.ANSI_RED + "content length must contain at least 1 character " +
+                    "and at most 250 character" + UI.ANSI_RESET);
+
+        System.out.print("enter post content : ");
+        String content = UI.scanner.nextLine();
+
+        return new Event(Main.UserRequest.NEW_POST, content);
+
     }
 }

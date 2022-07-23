@@ -1,4 +1,4 @@
-package Exceptions.UserException;
+package Exceptions.LogicException;
 
 public class UsernameFormatException extends IllegalStateException {
     public UsernameFormatException() { super(); }

@@ -1,4 +1,4 @@
-package Exceptions.UserException;
+package Exceptions.LogicException;
 
 public class PasswordLengthException extends IllegalStateException {
     public PasswordLengthException() { super(); }

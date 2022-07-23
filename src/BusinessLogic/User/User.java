@@ -1,6 +1,6 @@
 package BusinessLogic.User;
 
-import Exceptions.UserException.*;
+import Exceptions.LogicException.*;
 
 import java.sql.SQLException;
 
@@ -9,6 +9,8 @@ public class User {
     private String password;
     private int number_of_followers;
     private int number_of_followings;
+    private int number_of_post;
+    private int last_post_id; /// this is number of post but does not decrease with deleting post
 
     public User(String username, String password)
             throws IllegalStateException, SQLException {
@@ -16,6 +18,8 @@ public class User {
         setPassword(password);
         setNumberOfFollowings(0);
         setNumberOfFollowers(0);
+        number_of_post = 0;
+        last_post_id = 0;
     }
 
     public User(String username, String password, int number_of_followers, int number_of_followings)
@@ -24,6 +28,8 @@ public class User {
         setPassword(password);
         setNumberOfFollowers(number_of_followers);
         setNumberOfFollowings(number_of_followings);
+        number_of_post = 0;
+        last_post_id = 0;
     }
 
     private void setUsername(String username)
@@ -92,4 +98,16 @@ public class User {
             throw new PasswordFormatException();
     }
 
+    public int getNumberOfPost() {
+        return number_of_post;
+    }
+
+    public int getLastPostId() {
+        return last_post_id;
+    }
+
+    public void addPost() {
+        ++number_of_post;
+        ++last_post_id;
+    }
 }
