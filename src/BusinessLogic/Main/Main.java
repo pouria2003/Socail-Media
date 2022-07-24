@@ -38,6 +38,8 @@ public class Main {
         NEW_POST,
         POSTS,
         POST,
+        MY_POSTS,
+        MY_POST,
         EXIT
     }
 
@@ -67,6 +69,8 @@ public class Main {
                     case NEW_POST -> newPost();
                     case POSTS -> posts();
                     case POST -> post();
+                    case MY_POSTS -> myPosts();
+                    case MY_POST -> myPost();
                 }
             } catch (SQLException e) {
                 System.out.println(UI.UI.ANSI_RED + "we have some problem with connecting to database\n" +
@@ -313,7 +317,7 @@ public class Main {
 
     /// TODO : handle sql exception
     private static void newPost() {
-        String post_id = user.getUsername() + "_" + ( user.getLastPostId() + 1 );
+        String post_id = user.getUsername() + "_" + (user.getLastPostId() + 1);
         try {
             Post post = new Post(event.data[0], post_id, 0);
             DataBase.Post.addPost(post, user.getUsername());
@@ -329,8 +333,7 @@ public class Main {
     }
 
     private static void posts() {
-        String user_choice = event.data[0];
-        if(user_choice.equals("0")) {
+        if(event.data[0].equals("0")) {
             response = () -> UI.Profile.profile(searched_user, DataBase.Follow.doesFollow(
                     user.getUsername(), searched_user.getUsername()), Profile.ProfileSituation.NORMAL);
         }
@@ -340,8 +343,50 @@ public class Main {
     }
 
     private static void post() {
-        response = () -> UI.Profile.posts(DataBase.Post.PostsList(searched_user.getUsername()),
-                searched_user.getUsername());
+        if(event.data[0].equals("0")) {
+            response = () -> UI.Profile.posts(DataBase.Post.PostsList(searched_user.getUsername()),
+                    searched_user.getUsername());
+        }
+        else if(event.data[0].equals("1")) {
+            try {
+                DataBase.Post.like(event.data[1]);
+                response = () -> UI.Profile.post(DataBase.Post.post(event.data[1]), searched_user.getUsername());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void myPosts() {
+        if(event.data[0].equals("0")) {
+            response = () -> UI.MyProfile.myProfile(user, Profile.ProfileSituation.NORMAL);
+        }
+        else {
+            response = () -> UI.MyProfile.myPost(DataBase.Post.post(event.data[0]));
+        }
+    }
+
+    private static void myPost() {
+        if(event.data[0].equals("0")) {
+            response = () -> UI.MyProfile.myPosts(DataBase.Post.PostsList(user.getUsername()));
+        }
+        else if(event.data[0].equals("1")) {
+            try {
+                DataBase.Post.like(event.data[1]);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            response = () -> UI.MyProfile.myPost(DataBase.Post.post(event.data[1]));
+        }
+        else if(event.data[0].equals("2")) {
+            try {
+                DataBase.Post.deletePost(event.data[1], user.getUsername());
+                user.deletePost();
+                response = () -> UI.MyProfile.myPosts(DataBase.Post.PostsList(user.getUsername()));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void exitProgram(int code) {

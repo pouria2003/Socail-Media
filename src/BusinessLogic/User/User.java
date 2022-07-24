@@ -29,8 +29,8 @@ public class User {
         setPassword(password);
         setNumberOfFollowers(number_of_followers);
         setNumberOfFollowings(number_of_followings);
-        number_of_posts = 0;
-        last_post_id = 0;
+        this.number_of_posts = number_of_posts;
+        this.last_post_id = last_post_id;
     }
 
     private void setUsername(String username)
@@ -110,5 +110,9 @@ public class User {
     public void addPost() {
         ++number_of_posts;
         ++last_post_id;
+    }
+
+    public void deletePost() {
+        --number_of_posts;
     }
 }
